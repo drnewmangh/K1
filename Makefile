@@ -19,6 +19,7 @@ TEST_OBJS = $(OBJ_DIR)/$(TEST_BASE_NAME).o $(OBJ_DIR)/ValidRomanTestData.o
 
 # compiler / linker flags
 CFLAGS = -Wall -Werror -I$(INC_DIR)
+CFLAGS_TEST = $(CFLAGS) -pthread
 LFLAGS = -L$(LIB_DIR)
 LIBS = -l$(BASE_NAME)
 
@@ -27,21 +28,26 @@ all: test lib
 test: $(TEST_NAME)
 
 $(TEST_NAME): $(LIB_NAME) $(TEST_OBJS)
+	mkdir -p $(BIN_DIR)
 	$(CC) -o $(TEST_NAME) $(TEST_OBJS) $(LFLAGS) $(LIBS) -lcheck
 
 lib: $(LIB_NAME)
 
 $(LIB_NAME): $(LIB_OBJS)
+	mkdir -p $(LIB_DIR)
 	ar -r $@ $(LIB_OBJS)
 
 $(OBJ_DIR)/$(BASE_NAME).o: $(SRC_DIR)/$(BASE_NAME).c
+	mkdir -p $(OBJ_DIR)
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 $(OBJ_DIR)/$(TEST_BASE_NAME).o: $(TEST_SRC_DIR)/$(TEST_BASE_NAME).c
-	$(CC) $(CFLAGS) -pthread $(INCLUDES) -c $< -o $@
+	mkdir -p $(OBJ_DIR)
+	$(CC) $(CFLAGS_TEST) $(INCLUDES) -c $< -o $@
 
 $(OBJ_DIR)/ValidRomanTestData.o: $(TEST_SRC_DIR)/ValidRomanTestData.c
-	$(CC) $(CFLAGS) -pthread $(INCLUDES) -c $< -o $@
+	mkdir -p $(OBJ_DIR)
+	$(CC) $(CFLAGS_TEST) $(INCLUDES) -c $< -o $@
 
 clean:
 	$(RM) $(LIB_OBJS) $(TEST_OBJS) $(TEST_NAME) $(LIB_NAME)
